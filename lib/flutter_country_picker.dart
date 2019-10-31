@@ -38,7 +38,8 @@ class CountryPicker extends StatelessWidget {
     this.selectedCountry,
     @required this.onChanged,
     this.dense = false,
-    this.showFlag = true,
+    this.showFlagOnButton = true,
+    this.showFlagOnList = true,
     this.showDialingCode = false,
     this.showName = true,
   }) : super(key: key);
@@ -46,7 +47,8 @@ class CountryPicker extends StatelessWidget {
   final Country selectedCountry;
   final ValueChanged<Country> onChanged;
   final bool dense;
-  final bool showFlag;
+  final bool showFlagOnButton;
+  final bool showFlagOnList;
   final bool showDialingCode;
   final bool showName;
 
@@ -72,7 +74,7 @@ class CountryPicker extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(
-              child: showFlag
+              child: showFlagOnButton
                   ? Image.asset(
                       displayCountry.asset,
                       package: "flutter_country_picker",
@@ -135,6 +137,7 @@ class CountryPicker extends StatelessWidget {
     final Country picked = await showCountryPicker(
       context: context,
       defaultCountry: defaultCountry,
+      showFlagOnList: showFlagOnList,
     );
 
     if (picked != null && picked != selectedCountry) onChanged(picked);
@@ -146,6 +149,7 @@ class CountryPicker extends StatelessWidget {
 Future<Country> showCountryPicker({
   BuildContext context,
   Country defaultCountry,
+  bool showFlagOnList,
 }) async {
   assert(Country.findByIsoCode(defaultCountry.isoCode) != null);
 
@@ -153,6 +157,7 @@ Future<Country> showCountryPicker({
     context: context,
     builder: (BuildContext context) => _CountryPickerDialog(
           defaultCountry: defaultCountry,
+          showFlagOnList: showFlagOnList,
         ),
   );
 }
@@ -161,16 +166,25 @@ class _CountryPickerDialog extends StatefulWidget {
   const _CountryPickerDialog({
     Key key,
     Country defaultCountry,
+    this.showFlagOnList,
   }) : super(key: key);
 
+  final bool showFlagOnList;
+
   @override
-  State<StatefulWidget> createState() => _CountryPickerDialogState();
+  State<StatefulWidget> createState() => _CountryPickerDialogState(
+    showFlagOnList: showFlagOnList,
+  );
 }
 
 class _CountryPickerDialogState extends State<_CountryPickerDialog> {
-  TextEditingController controller = new TextEditingController();
+  final bool showFlagOnList;
+
+  TextEditingController controller = TextEditingController();
   String filter;
   List<Country> countries;
+
+  _CountryPickerDialogState({this.showFlagOnList});
 
   @override
   void initState() {
@@ -241,13 +255,16 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
                           trailing: Text("+ ${country.dialingCode}"),
                           title: Row(
                             children: <Widget>[
+                              showFlagOnList ?
                               Padding(
                                 padding: EdgeInsets.only(right: 8.0),
                                 child: Image.asset(
                                   country.asset,
                                   package: "flutter_country_picker",
                                 ),
-                              ),
+
+                              )
+                              : Container(),
                               Expanded(
                                 child: Text(
                                   country.name,
