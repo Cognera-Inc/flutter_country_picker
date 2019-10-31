@@ -203,23 +203,26 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
       child: Dialog(
         child: Column(
           children: <Widget>[
-            new TextField(
-              decoration: new InputDecoration(
-                hintText: MaterialLocalizations.of(context).searchFieldLabel,
-                prefixIcon: Icon(Icons.search),
-                suffixIcon: filter == null || filter == ""
-                    ? Container(
-                        height: 0.0,
-                        width: 0.0,
-                      )
-                    : InkWell(
-                        child: Icon(Icons.clear),
-                        onTap: () {
-                          controller.clear();
-                        },
-                      ),
+            Container(
+              padding: EdgeInsets.all(8.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: MaterialLocalizations.of(context).searchFieldLabel,
+                  prefixIcon: Icon(Icons.search),
+                  suffixIcon: filter == null || filter == ""
+                      ? Container(
+                          height: 0.0,
+                          width: 0.0,
+                        )
+                      : InkWell(
+                          child: Icon(Icons.clear),
+                          onTap: () {
+                            controller.clear();
+                          },
+                        ),
+                ),
+                controller: controller,
               ),
-              controller: controller,
             ),
             Expanded(
               child: Scrollbar(
@@ -238,18 +241,18 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
                           trailing: Text("+ ${country.dialingCode}"),
                           title: Row(
                             children: <Widget>[
-                              Image.asset(
-                                country.asset,
-                                package: "flutter_country_picker",
+                              Padding(
+                                padding: EdgeInsets.only(right: 8.0),
+                                child: Image.asset(
+                                  country.asset,
+                                  package: "flutter_country_picker",
+                                ),
                               ),
                               Expanded(
-                                child: Container(
-                                  margin: EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    country.name,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                child: Text(
+                                  country.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
