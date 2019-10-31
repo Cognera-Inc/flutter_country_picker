@@ -42,6 +42,7 @@ class CountryPicker extends StatelessWidget {
     this.showFlagOnList = true,
     this.showDialingCode = false,
     this.showName = true,
+    this.transparentBackground = false,
   }) : super(key: key);
 
   final Country selectedCountry;
@@ -51,6 +52,7 @@ class CountryPicker extends StatelessWidget {
   final bool showFlagOnList;
   final bool showDialingCode;
   final bool showName;
+  final bool transparentBackground;
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +139,7 @@ class CountryPicker extends StatelessWidget {
     final Country picked = await showCountryPicker(
       context: context,
       defaultCountry: defaultCountry,
+      transparentBackground: transparentBackground,
       showFlagOnList: showFlagOnList,
     );
 
@@ -149,6 +152,7 @@ class CountryPicker extends StatelessWidget {
 Future<Country> showCountryPicker({
   BuildContext context,
   Country defaultCountry,
+  bool transparentBackground,
   bool showFlagOnList,
 }) async {
   assert(Country.findByIsoCode(defaultCountry.isoCode) != null);
@@ -157,6 +161,7 @@ Future<Country> showCountryPicker({
     context: context,
     builder: (BuildContext context) => _CountryPickerDialog(
           defaultCountry: defaultCountry,
+          transparentBackground: transparentBackground,
           showFlagOnList: showFlagOnList,
         ),
   );
@@ -166,25 +171,29 @@ class _CountryPickerDialog extends StatefulWidget {
   const _CountryPickerDialog({
     Key key,
     Country defaultCountry,
+    this.transparentBackground,
     this.showFlagOnList,
   }) : super(key: key);
 
+  final bool transparentBackground;
   final bool showFlagOnList;
 
   @override
   State<StatefulWidget> createState() => _CountryPickerDialogState(
+    transparentBackground: transparentBackground,
     showFlagOnList: showFlagOnList,
   );
 }
 
 class _CountryPickerDialogState extends State<_CountryPickerDialog> {
+  final bool transparentBackground;
   final bool showFlagOnList;
 
   TextEditingController controller = TextEditingController();
   String filter;
   List<Country> countries;
 
-  _CountryPickerDialogState({this.showFlagOnList});
+  _CountryPickerDialogState({this.showFlagOnList, this.transparentBackground});
 
   @override
   void initState() {
@@ -214,6 +223,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      type: transparentBackground ? MaterialType.transparency : MaterialType.canvas,
       child: Dialog(
         child: Column(
           children: <Widget>[
