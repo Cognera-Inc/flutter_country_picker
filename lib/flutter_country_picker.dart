@@ -77,35 +77,53 @@ class CountryPicker extends StatelessWidget {
     return InkWell(
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-              child: showFlagOnButton
-                  ? Image.asset(
-                      displayCountry.asset,
-                      package: "flutter_country_picker",
-                      height: 32.0,
-                      fit: BoxFit.fitWidth,
-                    )
-                  : Container()),
-          Container(
-              child: showDialingCode
-                  ? Text(
-                      " (+${displayCountry.dialingCode})",
-                      style: TextStyle(fontSize: 20.0),
-                    )
-                  : Container()),
-          Container(
-              child: showName
-                  ? Text(
-                      " ${displayCountry.name}",
-                      style: TextStyle(fontSize: 22.0),
-                    )
-                  : Container()),
-          Icon(Icons.arrow_drop_down,
+          showFlagOnButton
+          ? Flexible(
+            flex: 1,
+            child: Container(
+              child: Image.asset(
+                displayCountry.asset,
+                package: "flutter_country_picker",
+                height: 32.0,
+                fit: BoxFit.fitWidth,
+              )
+            ),
+          )
+          : Container(),
+          showDialingCode
+          ? Flexible(
+            flex: 3,
+              child: Container(
+              child: Text(
+                  " (+${displayCountry.dialingCode})",
+                  style: TextStyle(fontSize: 20.0),
+                )
+              ),
+          )
+          : Container(),
+          showName
+          ? Flexible(
+            flex: 7,
+            child: Container(
+              child: Text(
+                  " ${displayCountry.name}",
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: TextStyle(fontSize: 22.0),
+                )
+              ),
+          )
+          : Container(),
+          Flexible(
+            flex: 1,
+            child: Icon(Icons.arrow_drop_down,
               color: Theme.of(context).brightness == Brightness.light
                   ? Colors.grey.shade700
-                  : Colors.white70),
+                    : Colors.white70),
+          ),
         ],
       ),
       onTap: () {
