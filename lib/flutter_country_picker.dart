@@ -45,6 +45,7 @@ class CountryPicker extends StatelessWidget {
     this.transparentBackground = false,
     this.padding = const EdgeInsets.only(top: 32.0, bottom: 32.0,),
     this.borderRadius = 10.0,
+    this.showIsoCode = false,
   }) : super(key: key);
 
   final Country selectedCountry;
@@ -54,6 +55,7 @@ class CountryPicker extends StatelessWidget {
   final bool showFlagOnList;
   final bool showDialingCode;
   final bool showName;
+  final bool showIsoCode;
   final bool transparentBackground;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
@@ -107,14 +109,22 @@ class CountryPicker extends StatelessWidget {
           ? Flexible(
             flex: 7,
             child: Container(
-              child: Text(
-                  " ${displayCountry.name}",
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: 22.0),
-                )
-              ),
+              child: showIsoCode
+              ? Text(
+                " ${displayCountry.isoCode}",
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(fontSize: 22.0),
+              )
+              : Text(
+                " ${displayCountry.name}",
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(fontSize: 22.0),
+              )
+            ),
           )
           : Container(),
           Flexible(
