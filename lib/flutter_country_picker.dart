@@ -44,6 +44,7 @@ class CountryPicker extends StatelessWidget {
     this.showName = true,
     this.transparentBackground = false,
     this.padding = const EdgeInsets.only(top: 32.0, bottom: 32.0,),
+    this.borderRadius = 10.0,
   }) : super(key: key);
 
   final Country selectedCountry;
@@ -55,6 +56,7 @@ class CountryPicker extends StatelessWidget {
   final bool showName;
   final bool transparentBackground;
   final EdgeInsetsGeometry padding;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +146,7 @@ class CountryPicker extends StatelessWidget {
       transparentBackground: transparentBackground,
       showFlagOnList: showFlagOnList,
       padding: padding,
+      borderRadius: borderRadius,
     );
 
     if (picked != null && picked != selectedCountry) onChanged(picked);
@@ -158,6 +161,7 @@ Future<Country> showCountryPicker({
   bool transparentBackground,
   bool showFlagOnList,
   EdgeInsetsGeometry padding,
+  double borderRadius,
 }) async {
   assert(Country.findByIsoCode(defaultCountry.isoCode) != null);
 
@@ -168,6 +172,7 @@ Future<Country> showCountryPicker({
           transparentBackground: transparentBackground,
           showFlagOnList: showFlagOnList,
           padding: padding,
+          borderRadius: borderRadius,
         ),
   );
 }
@@ -178,18 +183,21 @@ class _CountryPickerDialog extends StatefulWidget {
     Country defaultCountry,
     this.transparentBackground,
     this.showFlagOnList,
-    this.padding,
+    this.padding, 
+    this.borderRadius,
   }) : super(key: key);
 
   final bool transparentBackground;
   final bool showFlagOnList;
   final EdgeInsetsGeometry padding;
+  final double borderRadius;
 
   @override
   State<StatefulWidget> createState() => _CountryPickerDialogState(
     transparentBackground: transparentBackground,
     showFlagOnList: showFlagOnList,
     padding: padding,
+    borderRadius: borderRadius,
   );
 }
 
@@ -197,12 +205,13 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   final bool transparentBackground;
   final bool showFlagOnList;
   final EdgeInsetsGeometry padding;
+  final double borderRadius;
 
   TextEditingController controller = TextEditingController();
   String filter;
   List<Country> countries;
 
-  _CountryPickerDialogState({this.padding, this.showFlagOnList, this.transparentBackground});
+  _CountryPickerDialogState({this.borderRadius, this.padding, this.showFlagOnList, this.transparentBackground});
 
   @override
   void initState() {
@@ -244,6 +253,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
 
   Widget _countryListDialog() {
     return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
       child: Column(
         children: <Widget>[
           Container(
