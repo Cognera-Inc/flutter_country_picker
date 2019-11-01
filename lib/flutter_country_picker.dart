@@ -38,6 +38,7 @@ class CountryPicker extends StatelessWidget {
     this.selectedCountry,
     @required this.onChanged,
     this.dense = false,
+    this.denseList = false,
     this.showFlagOnButton = true,
     this.showFlagOnList = true,
     this.showDialingCode = false,
@@ -59,6 +60,7 @@ class CountryPicker extends StatelessWidget {
   final bool transparentBackground;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
+  final bool denseList;
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +177,7 @@ class CountryPicker extends StatelessWidget {
       showFlagOnList: showFlagOnList,
       padding: padding,
       borderRadius: borderRadius,
+      denseList: denseList,
     );
 
     if (picked != null && picked != selectedCountry) onChanged(picked);
@@ -190,6 +193,7 @@ Future<Country> showCountryPicker({
   bool showFlagOnList,
   EdgeInsetsGeometry padding,
   double borderRadius,
+  bool denseList,
 }) async {
   assert(Country.findByIsoCode(defaultCountry.isoCode) != null);
 
@@ -201,6 +205,7 @@ Future<Country> showCountryPicker({
           showFlagOnList: showFlagOnList,
           padding: padding,
           borderRadius: borderRadius,
+          denseList: denseList,
         ),
   );
 }
@@ -213,12 +218,14 @@ class _CountryPickerDialog extends StatefulWidget {
     this.showFlagOnList,
     this.padding, 
     this.borderRadius,
+    this.denseList,
   }) : super(key: key);
 
   final bool transparentBackground;
   final bool showFlagOnList;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
+  final bool denseList;
 
   @override
   State<StatefulWidget> createState() => _CountryPickerDialogState(
@@ -226,6 +233,7 @@ class _CountryPickerDialog extends StatefulWidget {
     showFlagOnList: showFlagOnList,
     padding: padding,
     borderRadius: borderRadius,
+    denseList: denseList,
   );
 }
 
@@ -234,12 +242,19 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   final bool showFlagOnList;
   final EdgeInsetsGeometry padding;
   final double borderRadius;
+  final bool denseList;
 
   TextEditingController controller = TextEditingController();
   String filter;
   List<Country> countries;
 
-  _CountryPickerDialogState({this.borderRadius, this.padding, this.showFlagOnList, this.transparentBackground});
+  _CountryPickerDialogState({
+    this.denseList,
+    this.borderRadius,
+    this.padding,
+    this.showFlagOnList,
+    this.transparentBackground,
+  });
 
   @override
   void initState() {
@@ -318,6 +333,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
                         country.isoCode.contains(filter)) {
                       return InkWell(
                         child: ListTile(
+                          dense: denseList,
                           trailing: Text("+ ${country.dialingCode}"),
                           title: Row(
                             children: <Widget>[
