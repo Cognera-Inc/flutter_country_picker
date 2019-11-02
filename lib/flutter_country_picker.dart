@@ -44,7 +44,7 @@ class CountryPicker extends StatelessWidget {
     this.showDialingCode = false,
     this.showName = true,
     this.transparentBackground = false,
-    this.padding = const EdgeInsets.only(top: 32.0, bottom: 32.0,),
+    this.height = 400.0,
     this.borderRadius = 10.0,
     this.showIsoCode = false,
   }) : super(key: key);
@@ -58,7 +58,7 @@ class CountryPicker extends StatelessWidget {
   final bool showName;
   final bool showIsoCode;
   final bool transparentBackground;
-  final EdgeInsetsGeometry padding;
+  final double height;
   final double borderRadius;
   final bool denseList;
 
@@ -175,7 +175,7 @@ class CountryPicker extends StatelessWidget {
       defaultCountry: defaultCountry,
       transparentBackground: transparentBackground,
       showFlagOnList: showFlagOnList,
-      padding: padding,
+      height: height,
       borderRadius: borderRadius,
       denseList: denseList,
     );
@@ -191,7 +191,7 @@ Future<Country> showCountryPicker({
   Country defaultCountry,
   bool transparentBackground,
   bool showFlagOnList,
-  EdgeInsetsGeometry padding,
+  double height,
   double borderRadius,
   bool denseList,
 }) async {
@@ -203,7 +203,7 @@ Future<Country> showCountryPicker({
           defaultCountry: defaultCountry,
           transparentBackground: transparentBackground,
           showFlagOnList: showFlagOnList,
-          padding: padding,
+          height: height,
           borderRadius: borderRadius,
           denseList: denseList,
         ),
@@ -216,14 +216,14 @@ class _CountryPickerDialog extends StatefulWidget {
     Country defaultCountry,
     this.transparentBackground,
     this.showFlagOnList,
-    this.padding, 
+    this.height,
     this.borderRadius,
     this.denseList,
   }) : super(key: key);
 
   final bool transparentBackground;
   final bool showFlagOnList;
-  final EdgeInsetsGeometry padding;
+  final double height;
   final double borderRadius;
   final bool denseList;
 
@@ -231,7 +231,7 @@ class _CountryPickerDialog extends StatefulWidget {
   State<StatefulWidget> createState() => _CountryPickerDialogState(
     transparentBackground: transparentBackground,
     showFlagOnList: showFlagOnList,
-    padding: padding,
+    height: height,
     borderRadius: borderRadius,
     denseList: denseList,
   );
@@ -240,7 +240,7 @@ class _CountryPickerDialog extends StatefulWidget {
 class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   final bool transparentBackground;
   final bool showFlagOnList;
-  final EdgeInsetsGeometry padding;
+  final double height;
   final double borderRadius;
   final bool denseList;
 
@@ -251,7 +251,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   _CountryPickerDialogState({
     this.denseList,
     this.borderRadius,
-    this.padding,
+    this.height,
     this.showFlagOnList,
     this.transparentBackground,
   });
@@ -292,10 +292,10 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   }
 
   Widget _countryListDialog() {
-    return Padding(
-      padding: padding,
-      child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius)),
+      child: Container(
+        height: height,
         child: Column(
           children: <Widget>[
             Container(
