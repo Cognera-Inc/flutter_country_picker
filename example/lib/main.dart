@@ -34,14 +34,24 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Flutter Country Picker Demo'),
       ),
       body: new Center(
-        child: CountryPicker(
-          showDialingCode: true,
-          onChanged: (Country country) {
-            setState(() {
-              _selected = country;
-            });
-          },
-          selectedCountry: _selected,
+        child: Container(
+          height: 50,
+          child: CountryPicker(
+            transparentBackground: true,
+            showIsoCode: true,
+            showDialingCode: false,
+            showFlagOnButton: false,
+            showFlagOnList: true,
+            denseList: true,
+            height: 350.0,
+            dense: false,
+            onChanged: (Country country) {
+              setState(() {
+                _selected = country;
+              });
+            },
+            selectedCountry: _selected,
+          ),
         ),
       ),
     );
