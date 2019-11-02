@@ -1,40 +1,62 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_country_picker/local_db.dart';
 import 'country.dart';
-import 'package:diacritic/diacritic.dart';
 
 export 'country.dart';
 
-const _platform = const MethodChannel('biessek.rocks/flutter_country_picker');
-Future<List<Country>> _fetchLocalizedCountryNames() async {
-  List<Country> renamed = new List();
-  Map result;
-  try {
-    var isoCodes = <String>[];
-    Country.ALL.forEach((Country country) {
-      isoCodes.add(country.isoCode);
-    });
-    result = await _platform.invokeMethod(
-        'getCountryNames', <String, dynamic>{'isoCodes': isoCodes});
-  } on PlatformException catch (e) {
-    return Country.ALL;
-  }
-
-  for (var country in Country.ALL) {
-    renamed.add(country.copyWith(name: result[country.isoCode]));
-  }
-  renamed.sort(
-      (Country a, Country b) => removeDiacritics(a.name).compareTo(b.name));
-
-  return renamed;
-}
 
 /// The country picker widget exposes an dialog to select a country from a
-/// pre defined list, see [Country.ALL]
-class CountryPicker extends StatelessWidget {
-  const CountryPicker({
+/// pre defined list, see [Country.all]
+// class CountryPicker extends StatelessWidget {
+class CountryPicker extends FutureBuilder<List<Country>> {
+  CountryPicker({
     Key key,
+    @required onChanged,
+    bool dense = false,
+    bool denseList = false,
+    bool showFlagOnButton = true,
+    bool showFlagOnList = true,
+    bool showDialingCode = false,
+    bool showName = true,
+    bool transparentBackground = false,
+    double height = 400.0,
+    double borderRadius = 10.0,
+    bool showIsoCode = false,
+    Country selectedCountry,
+  }) :
+    super(
+      future: LocalAssetsDb.fetchListOfCountries(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return _CountryPickerImplementation(
+            key: key,
+            countryList: snapshot.data,
+            onChanged: onChanged,
+            dense: dense,
+            denseList: denseList,
+            selectedCountry: selectedCountry,
+            borderRadius: borderRadius,
+            height: height,
+            showDialingCode: showDialingCode,
+            showFlagOnButton: showFlagOnButton,
+            showFlagOnList: showFlagOnList,
+            showIsoCode: showIsoCode,
+            showName: showName,
+            transparentBackground: transparentBackground,
+          );
+        }
+        return Container();
+      }
+    );
+}
+
+class _CountryPickerImplementation extends StatelessWidget {
+  const _CountryPickerImplementation
+({
+    Key key,
+    @required this.countryList,
     this.selectedCountry,
     @required this.onChanged,
     this.dense = false,
@@ -49,6 +71,7 @@ class CountryPicker extends StatelessWidget {
     this.showIsoCode = false,
   }) : super(key: key);
 
+  final List<Country> countryList;
   final Country selectedCountry;
   final ValueChanged<Country> onChanged;
   final bool dense;
@@ -68,83 +91,83 @@ class CountryPicker extends StatelessWidget {
     Country displayCountry = selectedCountry;
 
     if (displayCountry == null) {
-      displayCountry =
-          Country.findByIsoCode(Localizations.localeOf(context).countryCode);
+      displayCountry = Country.findByIsoCode(Localizations.localeOf(context).countryCode, countryList);
     }
 
     return dense
-        ? _renderDenseDisplay(context, displayCountry)
-        : _renderDefaultDisplay(context, displayCountry);
+      ? _renderDenseDisplay(context, displayCountry, countryList)
+      : _renderDefaultDisplay(context, displayCountry, countryList);
   }
 
-  _renderDefaultDisplay(BuildContext context, Country displayCountry) {
+  _renderDefaultDisplay(BuildContext context, Country displayCountry, List<Country> countryList) {
     return InkWell(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          showFlagOnButton
-          ? Flexible(
-            flex: 1,
-            child: Container(
-              child: Image.asset(
-                displayCountry.asset,
-                package: "flutter_country_picker",
-                height: 32.0,
-                fit: BoxFit.fitWidth,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,  
+            children: <Widget>[
+              showFlagOnButton
+              ? Flexible(
+                flex: 1,
+                child: Container(
+                  child: Image.asset(
+                    displayCountry.asset,
+                    package: "flutter_country_picker",
+                    height: 32.0,
+                    fit: BoxFit.fitWidth,
+                  )
+                ),
               )
-            ),
-          )
-          : Container(),
-          showDialingCode
-          ? Flexible(
-            flex: 3,
-              child: Container(
-              child: Text(
-                  " (+${displayCountry.dialingCode})",
-                  style: TextStyle(fontSize: 20.0),
-                )
+              : Container(),
+              showDialingCode
+              ? Flexible(
+                flex: 3,
+                  child: Container(
+                  child: Text(
+                      " (+${displayCountry.dialingCode})",
+                      style: TextStyle(fontSize: 20.0),
+                    )
+                  ),
+              )
+              : Container(),
+              showName
+              ? Flexible(
+                flex: 7,
+                child: Container(
+                  child: showIsoCode
+                  ? Text(
+                    " ${displayCountry.isoCode}",
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: 22.0),
+                  )
+                  : Text(
+                    " ${displayCountry.name}",
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(fontSize: 22.0),
+                  )
+                ),
+              )
+              : Container(),
+              Flexible(
+                flex: 1,
+                child: Icon(Icons.arrow_drop_down,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.grey.shade700
+                        : Colors.white70),
               ),
-          )
-          : Container(),
-          showName
-          ? Flexible(
-            flex: 7,
-            child: Container(
-              child: showIsoCode
-              ? Text(
-                " ${displayCountry.isoCode}",
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: TextStyle(fontSize: 22.0),
-              )
-              : Text(
-                " ${displayCountry.name}",
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                style: TextStyle(fontSize: 22.0),
-              )
-            ),
-          )
-          : Container(),
-          Flexible(
-            flex: 1,
-            child: Icon(Icons.arrow_drop_down,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey.shade700
-                    : Colors.white70),
+            ],
           ),
-        ],
-      ),
-      onTap: () {
-        _selectCountry(context, displayCountry);
-      },
-    );
-  }
+          onTap: () {
+            _selectCountry(context, countryList);
+          },
+        );
+      }
 
-  _renderDenseDisplay(BuildContext context, Country displayCountry) {
+
+  _renderDenseDisplay(BuildContext context, Country displayCountry, List<Country> countryList) {
     return InkWell(
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -163,16 +186,15 @@ class CountryPicker extends StatelessWidget {
         ],
       ),
       onTap: () {
-        _selectCountry(context, displayCountry);
+        _selectCountry(context, countryList);
       },
     );
   }
 
-  Future<Null> _selectCountry(
-      BuildContext context, Country defaultCountry) async {
+  Future<Null> _selectCountry(BuildContext context, List<Country> countryList) async {
     final Country picked = await showCountryPicker(
       context: context,
-      defaultCountry: defaultCountry,
+      countryList: countryList,
       transparentBackground: transparentBackground,
       showFlagOnList: showFlagOnList,
       height: height,
@@ -188,32 +210,30 @@ class CountryPicker extends StatelessWidget {
 /// you can pass and [defaultCountry], see [Country.findByIsoCode]
 Future<Country> showCountryPicker({
   BuildContext context,
-  Country defaultCountry,
+  List<Country> countryList,
   bool transparentBackground,
   bool showFlagOnList,
   double height,
   double borderRadius,
   bool denseList,
 }) async {
-  assert(Country.findByIsoCode(defaultCountry.isoCode) != null);
-
   return await showDialog<Country>(
     context: context,
     builder: (BuildContext context) => _CountryPickerDialog(
-          defaultCountry: defaultCountry,
-          transparentBackground: transparentBackground,
-          showFlagOnList: showFlagOnList,
-          height: height,
-          borderRadius: borderRadius,
-          denseList: denseList,
-        ),
+      countryList: countryList,
+      transparentBackground: transparentBackground,
+      showFlagOnList: showFlagOnList,
+      height: height,
+      borderRadius: borderRadius,
+      denseList: denseList,
+    ),
   );
 }
 
 class _CountryPickerDialog extends StatefulWidget {
   const _CountryPickerDialog({
     Key key,
-    Country defaultCountry,
+    this.countryList,
     this.transparentBackground,
     this.showFlagOnList,
     this.height,
@@ -226,6 +246,7 @@ class _CountryPickerDialog extends StatefulWidget {
   final double height;
   final double borderRadius;
   final bool denseList;
+  final List<Country> countryList;
 
   @override
   State<StatefulWidget> createState() => _CountryPickerDialogState(
@@ -234,6 +255,7 @@ class _CountryPickerDialog extends StatefulWidget {
     height: height,
     borderRadius: borderRadius,
     denseList: denseList,
+    countryList: countryList,
   );
 }
 
@@ -243,12 +265,14 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   final double height;
   final double borderRadius;
   final bool denseList;
+  final List<Country> countryList;
 
   TextEditingController controller = TextEditingController();
   String filter;
   List<Country> countries;
 
   _CountryPickerDialogState({
+    this.countryList,
     this.denseList,
     this.borderRadius,
     this.height,
@@ -259,14 +283,6 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
   @override
   void initState() {
     super.initState();
-
-    countries = Country.ALL;
-
-    _fetchLocalizedCountryNames().then((renamed) {
-      setState(() {
-        countries = renamed;
-      });
-    });
 
     controller.addListener(() {
       setState(() {
@@ -322,9 +338,9 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
             Expanded(
               child: Scrollbar(
                 child: ListView.builder(
-                  itemCount: countries.length,
+                  itemCount: countryList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Country country = countries[index];
+                    Country country = countryList[index];
                     if (filter == null ||
                         filter == "" ||
                         country.name

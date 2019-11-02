@@ -17,4 +17,5 @@ flutter:
     androidPackage: rocks.biessek.fluttercountrypicker
     pluginClass: FlutterCountryPickerPlugin
   assets:
+    - assets/country_code.json
     - assets/flags/
