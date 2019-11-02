@@ -123,7 +123,7 @@ class _CountryPickerImplementation extends StatelessWidget {
                 flex: 3,
                   child: Container(
                   child: Text(
-                      " (+${displayCountry.dialingCode})",
+                      " (${displayCountry.dialingCode})",
                       style: TextStyle(fontSize: 20.0),
                     )
                   ),
@@ -350,7 +350,7 @@ class _CountryPickerDialogState extends State<_CountryPickerDialog> {
                       return InkWell(
                         child: ListTile(
                           dense: denseList,
-                          trailing: Text("+ ${country.dialingCode}"),
+                          trailing: Text("${country.dialingCode}"),
                           title: Row(
                             children: <Widget>[
                               showFlagOnList ?
