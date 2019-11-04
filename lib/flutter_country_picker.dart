@@ -9,7 +9,6 @@ export 'country.dart';
 
 /// The country picker widget exposes an dialog to select a country from a
 /// pre defined list, see [Country.all]
-// class CountryPicker extends StatelessWidget {
 class CountryPicker extends FutureBuilder<List<Country>> {
   CountryPicker({
     Key key,
@@ -101,70 +100,71 @@ class _CountryPickerImplementation extends StatelessWidget {
 
   _renderDefaultDisplay(BuildContext context, Country displayCountry, List<Country> countryList) {
     return InkWell(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,  
-            children: <Widget>[
-              showFlagOnButton
-              ? Flexible(
-                flex: 1,
-                child: Container(
-                  child: Image.asset(
-                    displayCountry.asset,
-                    package: "flutter_country_picker",
-                    height: 32.0,
-                    fit: BoxFit.fitWidth,
-                  )
-                ),
-              )
-              : Container(),
-              showDialingCode
-              ? Flexible(
-                flex: 3,
-                  child: Container(
-                  child: Text(
-                      " (${displayCountry.dialingCode})",
-                      style: TextStyle(fontSize: 20.0),
-                    )
-                  ),
-              )
-              : Container(),
-              showName
-              ? Flexible(
-                flex: 7,
-                child: Container(
-                  child: showIsoCode
-                  ? Text(
-                    " ${displayCountry.isoCode}",
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(fontSize: 22.0),
-                  )
-                  : Text(
-                    " ${displayCountry.name}",
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                    style: TextStyle(fontSize: 22.0),
-                  )
-                ),
-              )
-              : Container(),
-              Flexible(
-                flex: 1,
-                child: Icon(Icons.arrow_drop_down,
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.grey.shade700
-                        : Colors.white70),
-              ),
-            ],
-          ),
-          onTap: () {
-            _selectCountry(context, countryList);
-          },
-        );
-      }
+			child: Row(
+				mainAxisSize: MainAxisSize.min,
+				mainAxisAlignment: MainAxisAlignment.center,  
+				children: <Widget>[
+					showFlagOnButton
+					? Flexible(
+						flex: 1,
+						child: Container(
+							child: Image.asset(
+								displayCountry.asset,
+								package: "flutter_country_picker",
+								height: 32.0,
+								fit: BoxFit.fitWidth,
+							)
+						),
+					)
+					: Container(),
+					showDialingCode
+					? Flexible(
+						flex: 3,
+							child: Container(
+							child: Text(
+									" (${displayCountry.dialingCode})",
+									style: TextStyle(fontSize: 20.0),
+								)
+							),
+					)
+					: Container(),
+					showName
+					? Flexible(
+						flex: 7,
+						child: Container(
+							child: showIsoCode
+							? Text(
+								" ${displayCountry.isoCode}",
+								textAlign: TextAlign.center,
+								overflow: TextOverflow.ellipsis,
+								maxLines: 1,
+								style: TextStyle(fontSize: 22.0),
+							)
+							: Text(
+								" ${displayCountry.name}",
+								textAlign: TextAlign.center,
+								overflow: TextOverflow.ellipsis,
+								maxLines: 1,
+								style: TextStyle(fontSize: 22.0),
+							)
+						),
+					)
+					: Container(),
+					Flexible(
+						flex: 1,
+						child: Icon(Icons.arrow_drop_down,
+							color: Theme.of(context).brightness == Brightness.light
+									? Colors.grey.shade700
+									: Colors.white70,
+						),
+					),
+				],
+			),
+			onTap: () {
+				_selectCountry(context, countryList);
+			},
+		);
+	}
 
 
   _renderDenseDisplay(BuildContext context, Country displayCountry, List<Country> countryList) {
